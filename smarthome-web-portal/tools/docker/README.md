@@ -18,7 +18,7 @@ Here are the steps to run the Smart Home Web Portal in a Docker container.
    There are two options (described in step 3.1 and 3.2 respectively) to get the Docker image. We recommend using option 3.1 as it is simpler and quicker.
    
   3.1 Pre-built Docker image
-     * Download the pre-built image hosted on DockerHub (https://hub.docker.com/r/smarthome2cloud/smarthome-demo/) by running the command below.
+     * Download the pre-built image hosted on DockerHub (https://hub.docker.com/r/smarthome2cloud/smarthome-demo/) by running the command below.   
    `docker pull smarthome2cloud/smarthome-demo`
   
   3.2 Build the image
@@ -47,7 +47,7 @@ Here are the steps to run the Smart Home Web Portal in a Docker container.
    * Enter the default login credentials: admin/admin
    * Click the Gateway tab on the left hand and update the gateway IP and geo location for gateway *"demo"*
       ![admin portal](../../screenshots/smarthome-adminportal.PNG)    
-   * Restart the container (Refer to step 8 on how to get the container id)    
+   * Restart the container (Refer to step 6 on how to get the container id)    
       `docker restart <container id>`
    * Login to the Home portal thru `http://<host-ip-addr>:3030` (login credentials: ostro/ostro)
 
