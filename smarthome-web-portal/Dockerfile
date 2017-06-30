@@ -39,7 +39,7 @@ RUN echo $http_proxy
 RUN apt-get clean && apt-get update
 
 # install python2 and common tools
-RUN apt-get -y install vim wget netcat python
+RUN apt-get -y install netcat python
 
 # forward port
 EXPOSE 3000 4000
@@ -54,7 +54,7 @@ RUN apt-get install -y debconf-utils \
     && chown mysql:mysql /var/run/mysqld
 
 # Install rabbitmq supervisor and python deps for data analytics
-RUN apt-get install -y rabbitmq-server git python-pip python-dev ca-certificates git-core ssh supervisor python-scipy python-numpy python-matplotlib
+RUN apt-get install -y rabbitmq-server python-pip supervisor python-scipy python-numpy python-matplotlib
 
 # Install source code
 COPY . /opt/SmartHome-Demo/smarthome-web-portal/
