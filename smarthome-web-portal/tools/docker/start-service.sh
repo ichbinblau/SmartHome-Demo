@@ -4,7 +4,7 @@
 function wait_service()
 {
     # Wait until the service gets started.
-    while ! nc -z localhost $2; do
+    while ! /bin/netstat -an | grep $2 >/dev/null; do
         echo "Waiting for $1 to start ..."
         sleep 1
     done
@@ -23,6 +23,7 @@ function start_service()
             wait_service 'MySQL' '3306'
             wait_service 'Rabbitmq' '5672'
             echo "Starting $1 server."
+            sleep 3
             /usr/local/bin/celery -A CeleryTask.tasks purge -f
             sleep 3
             /usr/bin/python2.7 CeleryTask/tasks.py

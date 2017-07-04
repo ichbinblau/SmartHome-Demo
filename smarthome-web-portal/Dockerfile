@@ -39,7 +39,7 @@ RUN echo $http_proxy
 RUN apt-get clean && apt-get update
 
 # install python2 and common tools
-RUN apt-get -y install netcat python
+RUN apt-get -y install net-tools python
 
 # forward port
 EXPOSE 3000 4000
