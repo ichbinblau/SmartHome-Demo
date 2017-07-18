@@ -39,17 +39,15 @@ RUN echo $http_proxy
 RUN apt-get clean && apt-get update
 
 # install python2 and common tools
-RUN apt-get -y install net-tools python
+RUN apt-get -y install python
 
 # forward port
 EXPOSE 3000 4000
 
 # Install MySQL Server in a Non-Interactive mode. Default root password will be "intel123"
-RUN apt-get install -y debconf-utils \
-    && echo "mysql-server mysql-server/root_password password intel123" | debconf-set-selections \
-    && echo "mysql-server mysql-server/root_password_again password intel123" | debconf-set-selections \
-    && apt-get -y install mysql-server \
-    && sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf \
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install mariadb-server \
+    && sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf \
     && mkdir -p /var/run/mysqld \
     && chown mysql:mysql /var/run/mysqld
 
