@@ -40,21 +40,15 @@ class Configuration(SingletonMixin):
     Singleton Config Parser Class
     """
     def __init__(self):
-        self.mysql_creds = None
-        self.rabbitmq_creds = None
-        self._get_vcap_service()
+        self.mysql_host = None
+        self.rabbitmq_host = None
+        self._get_host_env()
         self.parser = DefaultConfigParser()
         self.parser.read(get_full_path('utils', CONFIG_FILE_NAME))
 
-    def _get_vcap_service(self):
-        vcap_config = os.getenv('VCAP_SERVICES', None)
-        if vcap_config:
-            decoded_config = json.loads(vcap_config)
-            for key, value in decoded_config.iteritems():
-                if key.startswith('p-mysql'):
-                    self.mysql_creds = decoded_config[key][0]['credentials']
-                elif key.startswith('p-rabbitmq'):
-                    self.rabbitmq_creds = decoded_config[key][0]['credentials']
+    def _get_host_env(self):
+        self.mysql_host = os.getenv('MYSQL_MASTER_SERVICE_HOST', None)
+        self.rabbitmq_host = os.getenv('RABBIT_SERVICE_SERVICE_HOST', None)
 
     @staticmethod
     def get_config_path():
@@ -65,21 +59,8 @@ class Configuration(SingletonMixin):
         log_dir = self.parser.get_default('logging', 'log_dir', 'log')
         return get_full_path(log_dir, log_name)
 
-    def get_connection_url(self):
-        if self.mysql_creds:
-            uri = str(self.mysql_creds['uri']).split("?")
-            return "{}?charset=utf8".format(uri[0])
-        else:
-            return self._get_connection_url_from_file()
-
-    def get_rabbitmq_conn_str(self):
-        if self.rabbitmq_creds:
-            return str(self.rabbitmq_creds['uri'])
-        else:
-            return self._get_rabbitmq_conn_str_from_file()
-
     def _get_connection_url_from_file(self):
-        host = self.parser.get_default('mysql', 'host', 'localhost')
+        host = self.mysql_host if self.mysql_host else self.parser.get_default('mysql', 'host', 'localhost')
         port = self.parser.get_default('mysql', 'port', '3306')
         username = self.parser.get_default('mysql', 'username', 'root')
         password = self.parser.get_default('mysql', 'password', 'zaq12wsx')
@@ -87,7 +68,8 @@ class Configuration(SingletonMixin):
         return "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(username, password, host, port, database)
 
     def _get_rabbitmq_conn_str_from_file(self):
-        host = self.parser.get_default('rabbitmq-server', 'host', 'localhost')
+        host = self.rabbitmq_host if self.rabbitmq_host else \
+            self.parser.get_default('rabbitmq-server', 'host', 'localhost')
         port = self.parser.get_default('rabbitmq-server', 'port', '5672')
         username = self.parser.get_default('rabbitmq-server', 'username', 'guest')
         password = self.parser.get_default('rabbitmq-server', 'password', 'guest')
