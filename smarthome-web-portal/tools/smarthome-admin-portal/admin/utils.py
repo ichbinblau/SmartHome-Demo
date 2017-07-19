@@ -16,15 +16,10 @@ def format_datetime(date_time):
     return date_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def get_vcap_service():
-    vcap_config = os.getenv('VCAP_SERVICES', None)
-    if vcap_config:
-        decoded_config = json.loads(vcap_config)
-        for key, value in decoded_config.iteritems():
-            if key.startswith('mysql56'):
-                mysql_creds = decoded_config[key][0]['credentials']
-                uri = str(mysql_creds['uri']).split("?")
-                return "{}?charset=utf8".format(uri[0])
+def get_mysql_conn_str():
+    mysql_host = os.getenv('MYSQL_MASTER_SERVICE_HOST', None)
+    if mysql_host:
+        return "mysql+pymysql://root:intel123@{}:3306/smart_home?charset=utf8".format(mysql_host)
     else:
         return 'mysql+pymysql://root:zaq12wsx@localhost:13306/smart_home'
 

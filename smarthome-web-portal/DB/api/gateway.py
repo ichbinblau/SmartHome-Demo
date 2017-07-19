@@ -20,6 +20,7 @@ SRC_EXISTED_FIELD = {
 
 
 @database.run_in_session()
+@utils.wrap_to_dict(['id'])
 def add_gateway(session, src_dic, content={}):
     for k, v in SRC_EXISTED_FIELD.items():
         content[k] = src_dic.get(v, None)

@@ -142,8 +142,8 @@ class Gateway(CRUDMixin, HelperMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(30))
-    url = db.Column(db.VARCHAR(30))
-    address = db.Column(db.VARCHAR(50))
+    url = db.Column(db.VARCHAR(100))
+    address = db.Column(db.VARCHAR(100))
     latitude = db.Column(db.VARCHAR(20))
     longitude = db.Column(db.VARCHAR(20))
     status = db.Column(db.Boolean)

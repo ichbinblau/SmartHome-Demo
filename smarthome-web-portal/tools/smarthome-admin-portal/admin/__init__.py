@@ -11,8 +11,8 @@ app = Flask(__name__, static_url_path='')
 
 # Include config from config.py
 app.config.from_object('admin.config')
-from admin.utils import get_vcap_service
-app.config['SQLALCHEMY_DATABASE_URI'] = get_vcap_service()
+from admin.utils import get_mysql_conn_str
+app.config['SQLALCHEMY_DATABASE_URI'] = get_mysql_conn_str()
 
 # Create an instance of SQLAclhemy
 db = SQLAlchemy(app)

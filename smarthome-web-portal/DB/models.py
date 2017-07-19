@@ -513,8 +513,8 @@ class Gateway(Base, HelperMixin, DefaultMixin):
     __tablename__ = 'gateway'
 
     name = Column(VARCHAR(30))
-    url = Column(VARCHAR(30))
-    address = Column(VARCHAR(50))
+    url = Column(VARCHAR(100))
+    address = Column(VARCHAR(100))
     latitude = Column(VARCHAR(20))
     longitude = Column(VARCHAR(20))
     status = Column(Boolean)

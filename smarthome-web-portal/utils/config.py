@@ -59,6 +59,12 @@ class Configuration(SingletonMixin):
         log_dir = self.parser.get_default('logging', 'log_dir', 'log')
         return get_full_path(log_dir, log_name)
 
+    def get_connection_url(self):
+        return self._get_connection_url_from_file()
+
+    def get_rabbitmq_conn_str(self):
+        return self._get_rabbitmq_conn_str_from_file()
+
     def _get_connection_url_from_file(self):
         host = self.mysql_host if self.mysql_host else self.parser.get_default('mysql', 'host', 'localhost')
         port = self.parser.get_default('mysql', 'port', '3306')

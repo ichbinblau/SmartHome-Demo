@@ -43,12 +43,10 @@ DEFAULT_USERS = [
     {
         'username': 'dev',
         'password': hash_str('P@ssw0rd'),
-        'gateway_id': 1,
     },
     {
         'username': 'OTC',
         'password': hash_str('!otivity'),
-        'gateway_id': 2,
     },
 ]
 
@@ -99,10 +97,14 @@ def create_tables():
 
 def init_data():
     print "Init gateway data ..."
+    gw_ids = list()
     for gw in DEFAULT_GATEWAYS:
-        gateway.add_gateway(gw)
+        new_gateway = gateway.add_gateway(gw)
+        gw_ids.append(new_gateway.get('id'))
     print "Init user data ..."
-    for usr in DEFAULT_USERS:
+    for index, usr in enumerate(DEFAULT_USERS):
+        usr.update({'gateway_id':
+                    gw_ids[index]})
         user.add_user(usr)
     print "Init sensor type data ..."
     for st in SENSOR_TYPES:
@@ -110,7 +112,7 @@ def init_data():
     print "Init sensor groups ..."
     for sg in SENSOR_GROUPS:
         for i in range(len(DEFAULT_GATEWAYS)):
-            sensor_group.new({'gateway_id': i+1, 'name': sg[0], 'color': sg[1]})
+            sensor_group.new({'gateway_id': gw_ids[i], 'name': sg[0], 'color': sg[1]})
     print "Done."
 
 
