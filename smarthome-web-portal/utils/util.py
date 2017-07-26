@@ -223,3 +223,11 @@ def is_json(myjson):
     except ValueError, e:
         return False
     return True
+
+
+def url_join(*args):
+    """
+    Concat given arguments into a url. Trailing and leading slashes are
+    stripped for each argument.
+    """
+    return "/".join(map(lambda x: str(x).rstrip('/'), args))
