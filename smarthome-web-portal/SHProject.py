@@ -636,17 +636,25 @@ def get_data_model():
     data_model = gateway_model.get_gateway_model(session.get("gateway_id"))
     admin_uri = None
     env_str = os.getenv("VCAP_APPLICATION", "")
+    admin_host = os.getenv("ADMIN_SERVICE_HOST", "")
+    admin_port = os.getenv("ADMIN_SERVICE_NODE_PORT", "")
     if data_model:
         if env_str:
+            # Running in Cloud Foundry env
             env_dict = json.loads(env_str)
             uris = env_dict.get("application_uris", None)
             if uris:
                 admin_uri = uris[0].split(".")
                 admin_uri[0] = "smarthome-adminportal"
                 admin_uri = ".".join(admin_uri)
+        elif admin_host:
+            # Running in Kubernetes pod container
+            admin_uri = "http://{}:{}/images/model/".format(admin_host, admin_port)
         elif os.path.isfile('/.dockerenv'):
+            # Running in pure docker container
             admin_uri = "image/model/"
         else:
+            # Running in physical machine
             admin_uri = "http://localhost:4000/images/model/"
     emit('my model resp', admin_uri + data_model['data_model']['name'] + ".png" if data_model and admin_uri else data_model)
 
