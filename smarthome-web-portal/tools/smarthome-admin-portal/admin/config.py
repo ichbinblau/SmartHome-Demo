@@ -26,7 +26,7 @@ FORECAST_URL = "https://query.yahooapis.com/v1/public/yql"
 HISTORICAL_URL = "http://api.wunderground.com/api/563fd474dd62bc34/"
 FORECAST_RANGE = 3
 PROXY = {
-    'http': os.environ.get('proxy', None),
-    'https': os.environ.get('proxy', None)
+    'http': os.environ.get('http_proxy', None),
+    'https': os.environ.get('https_proxy', None)
 }
 
