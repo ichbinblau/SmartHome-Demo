@@ -25,9 +25,13 @@ def get_sensor_data(self, gw_id):
 
 
 def call_tasks():
+    app.control.purge()
     gw_list = list_gateways(status=True)
     for gw in gw_list:
-        get_sensor_data.delay(gw.get('id'))
+        queue = 'iot_queue_{}'.format(str(gw.get('id')))
+        get_sensor_data.apply_async((gw.get('id'),), queue=queue)
+        # To tell all workers in the cluster to start consuming from the dynamically created queue
+        app.control.add_consumer(queue, reply=True)
 
 
 if __name__ == '__main__':
