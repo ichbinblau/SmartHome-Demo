@@ -39,7 +39,7 @@ class Resource(object):
                     "links": [
                       {
                         "href": "/a/fan",
-                        "rt": "oic.r.fan",
+                        "rt": ["oic.r.fan",]
                         "if": "o",
                         "p": {
                             "bm": 3,
@@ -52,7 +52,8 @@ class Resource(object):
                 """
                 try:
                     href = str(item['links'][0]['href'])
-                    rt = str(item['links'][0]['rt'])
+                    # todo: parse multiple sensor types
+                    rt = str(item['links'][0]['rt'][0])
 
                     # by default, obs is True
                     observable = True
