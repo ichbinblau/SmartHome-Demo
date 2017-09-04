@@ -56,6 +56,7 @@ class DataManager(base.BaseTask):
         :param: active_resource: tuple, (uuid, href, resource_type, obs)
         """
         active_resource_ids = []
+        print self._sensor_type_map.keys()
         for i, v in enumerate(active_resource):
             uuid, href, typ, obs = v[0], v[1], v[2], v[3]
             if typ not in self._sensor_type_map.keys():

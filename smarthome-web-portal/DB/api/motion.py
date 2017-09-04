@@ -6,6 +6,7 @@ from DB.api import database
 from DB import exception
 from DB.models import Motion
 from DB.api import dbutils as utils
+from sqlalchemy import func
 
 RESP_FIELDS = ['id', 'resource', 'status', 'created_at']
 SRC_EXISTED_FIELD = {
@@ -61,6 +62,11 @@ def get_latest_by_gateway_uuid(session, resource_id,):
 
 
 @database.run_in_session()
-@utils.wrap_to_dict(RESP_FIELDS)  # wrap the raw DB object into dict
-def get_motion_by_time(session, start_time, end_time):
-    return utils.list_db_objects(session, Motion, created_at={'ge': str(start_time), 'le': str(end_time)})
+def get_data_by_time(session, start_time, end_time, resource_id):
+    return utils.list_db_objects_by_group(session, Motion,
+                                          select=[
+                                            func.count(Motion.status).label("cnt"),
+                                          ],
+                                          created_at={'ge': str(start_time), 'le': str(end_time)},
+                                          resource_id=resource_id,
+                                          status=True)

@@ -24,9 +24,9 @@ class ApiClient(object):
     A client to access a RESTful API or streaming resources
     """
     header = {}
-    stream_timeout = 360000
-    conn_timeout = 300
-    rest_timeout = 150
+    stream_timeout = None
+    conn_timeout = 10
+    rest_timeout = 30
 
     def __init__(self, api_uri, proxy, ca_cert=None):
         """
@@ -213,4 +213,17 @@ class IoTResponse(object):
         """Disconnect stream connection"""
         self._stop = True
 
-
+if __name__ == "__main__":
+    import datetime
+    p = "child-prc.intel.com:913"
+    proxy = {
+        'http': p,
+        'https': p
+    }
+    now = datetime.datetime.now()
+    client = ApiClient("https://10.239.76.11:8000/api/oic",
+                       proxy=proxy)
+    end = datetime.datetime.now()
+    print end - now
+    resp = client.get("/a/illuminance?di=c6ecba70-e72d-41c2-8657-1fb94ab29399&obs=1", stream=True)
+    resp.get_data()

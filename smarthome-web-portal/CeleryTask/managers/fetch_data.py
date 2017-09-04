@@ -40,6 +40,8 @@ class FetchData(threading.Thread):
             # ret = self.client.get("{}?di={}".format(typ, dev_id), {'obs': 1}, stream=True)
             self.connect()
             res = resource.get_resource(exception_when_missing=False, path=self.href, uuid=self.dev_id, status=True)
+            if not res:
+                return
             self.name = res.get('id')
             kargs = {
                 'sensor': res.get('sensor_type').get('mapping_class'),

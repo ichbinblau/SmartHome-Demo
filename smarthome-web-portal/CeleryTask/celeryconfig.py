@@ -13,5 +13,13 @@ BROKER_URL = mq_conn_str
 CELERY_IMPORTS = ('CeleryTask.tasks',)
 CELERY_REDIRECT_STDOUTS_LEVEL = 'INFO'
 CELERY_CREATE_MISSING_QUEUES = True
-
+CELERYD_OPTS = "--concurrency=1"
+CELERYBEAT_SCHEDULE = {
+    'count-activities': {
+        'task': 'CeleryTask.tasks.count_activities',
+        'schedule': 10,
+        'args': (),
+        'options': {'queue': 'celery'}
+    },
+}
 

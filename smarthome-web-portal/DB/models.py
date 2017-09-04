@@ -756,3 +756,19 @@ class GatewayModel(Base, HelperMixin, DefaultMixin):
     def __repr__(self):
         return "<GatewayModel(id='%s',gateway_id='%s',model_id='%s',created_at='%s')>" % (
             str(self.id), str(self.gateway_id), str(self.model_id), str(self.created_at))
+
+
+class Activity(Base, HelperMixin, DefaultMixin):
+    __tablename__ = 'activity'
+
+    resource_id = Column(Integer, ForeignKey('resource.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    resource = relationship('Resource', backref="", lazy=False)
+    total = Column(Integer)
+
+    def __init__(self, resource_id=None, total=None):
+        self.resource_id = resource_id
+        self.resource_id = total
+
+    def __repr__(self):
+        return "<Activity(id='%s',resource_id='%s',total='%s',created_at='%s')>" % (
+            str(self.id), str(self.resource_id), str(self.total), str(self.created_at))

@@ -8,14 +8,24 @@ import json
 from os.path import join
 import re
 import sys
-from pytz import timezone, all_timezones
-from uuid import UUID
+from pytz import timezone, all_timezones, utc
 from utils.settings import PROJECT_ROOT
 
 
 def get_utc_now():
     """get current datetime in utc format"""
     return datetime.datetime.utcnow()
+
+
+def is_dst(zonename):
+    """
+    Check whether the timezone is in day light saving
+    :param zonename: timezone in string
+    :return: true/false
+    """
+    tz = timezone(zonename)
+    now = utc.localize(datetime.datetime.utcnow())
+    return now.astimezone(tz).dst() != datetime.timedelta(0)
 
 
 def get_utc_offset(zone_name):
@@ -26,12 +36,28 @@ def get_utc_offset(zone_name):
         if zone_name in tz:
             tz_offset = timezone(zone_name)
             utc = get_utc_now()
-            return tz_offset.utcoffset(utc, is_dst=False)
+            return tz_offset.utcoffset(utc, is_dst=is_dst(zone_name)).total_seconds()/60/60
     return None
 
 
-def get_local_datetime(utc_dt, utc_offset):
-    return format_datetime(utc_dt + utc_offset)
+def get_local_datetime_now(tz):
+    """
+    Get the datetime.now in specified timezone
+    :param tz: timezone in string
+    :return: the current datetime in utc
+    """
+    return utc.localize(get_utc_now(), is_dst=is_dst(tz)).astimezone(timezone(tz))
+
+
+def toUTC(d, tz):
+    """
+    Convert unware datetime in this timezone to utc time
+    :param d: timezone unaware datetime
+    :param tz: timezone in string
+    :return: datetime in utc
+    """
+    tz = timezone(tz)
+    return tz.normalize(tz.localize(d)).astimezone(utc)
 
 
 def parse_datetime(date_time, exception_class=Exception):
@@ -230,4 +256,8 @@ def url_join(*args):
     Concat given arguments into a url. Trailing and leading slashes are
     stripped for each argument.
     """
-    return "/".join(map(lambda x: str(x).rstrip('/'), args))
+    return "/".join(map(lambda x: str(x).strip('/'), args))
+
+
+if __name__ == "__main__":
+    print url_join("http://localhost:3423/", '/api/oic')
