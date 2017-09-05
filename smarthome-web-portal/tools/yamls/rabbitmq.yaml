@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    component: rabbitmq
+  name: rabbitmq-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: taskQueue
+        component: rabbitmq
+    spec:
+      #hostNetwork: true
+      nodeSelector:
+        platform: nuc
+      containers:
+      - image: 192.168.1.102:5000/rabbitmq-service:latest
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit-service
+  labels:
+    app: rabbit
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5672
+    name: amqp
+  - port: 15672
+    name: dashboard
+  selector:
+    component: rabbitmq

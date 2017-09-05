@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: celery-worker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      #hostNetwork: true
+      nodeSelector:
+        platform: nuc
+      containers:
+      - name: long-task
+        image: 192.168.1.102:5000/celery:update
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args: ["celery amqp queue.delete iot_queue_3 && python CeleryTask/tasks.py && celery -A CeleryTask.celeryapp worker -l info -c 1 -Q iot_queue_3"]
+      - name: periodic-task
+        image: 192.168.1.102:5000/celery:update
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args: ["celery amqp queue.delete celery && celery -A CeleryTask.celeryapp worker -l info -c 1 -Q celery -B"]

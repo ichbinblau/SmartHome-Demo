@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        platform: minnowboard
+      containers:
+      - name: gateway-server
+        image: 192.168.1.102:5000/smarthome-gateway:latest
+        env:
+        - name: NODE_PATH
+          value: "/opt/SmartHome-Demo/gateway/node_modules/"
+        command: ["/usr/bin/node", "/opt/SmartHome-Demo/gateway/gateway-server.js", "-r"]
+      - name: gateway-index
+        image: 192.168.1.102:5000/smarthome-gateway:latest
+        env:
+        - name: NODE_PATH
+          value: "/opt/SmartHome-Demo/gateway/node_modules/"
+        command: ["/usr/bin/node", "/opt/SmartHome-Demo/gateway/node_modules/iot-rest-api-server/index.js"]

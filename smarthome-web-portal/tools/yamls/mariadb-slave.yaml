@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-slave
+  labels:
+    name: mysql-slave
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mysql-slave
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        platform: minnowboard
+      containers:
+      - name: slave
+        image: 192.168.1.102:5000/mariadb:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-pass
+              key: mysql-root-pass.secret
+        - name: MYSQL_REPL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-pass
+              key: mysql-root-pass.secret
+        - name: ROLE
+          value: "Slave"
+

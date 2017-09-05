@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: home-dashboard
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: home-dashboard
+    spec:
+      #hostNetwork: true
+      nodeSelector:
+        platform: nuc
+      containers:
+      - name: home-dashboard
+        image: 192.168.1.102:5000/home-portal:demo
+        ports:
+        - containerPort: 3000
+        env:
+        - name: ADMIN_SERVICE_HOST
+          value: "192.168.1.102"
+        - name: ADMIN_SERVICE_NODE_PORT
+          value: "32471"
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args: ["/usr/bin/python initial_db.py && /usr/bin/python SHProject.py"]
