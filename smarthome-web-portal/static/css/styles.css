@@ -526,6 +526,7 @@ body {
 
 .bg-blue { color: #00bcd4; }
 .bg-red { color: #c2185b; }
+.bg-grey {color: lightslategrey;}
 
 .material-icons.account {
     color: #ffffff;

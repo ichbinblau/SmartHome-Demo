@@ -19,7 +19,7 @@ CONFIG_FILE_NAME = 'SHProject.conf'
 
 # Divide sensors into groups
 ALERT_GRP = ['motion', 'gas', 'buzzer', 'button']
-STATUS_GRP = ['led', 'fan', 'rgbled', 'buzzer']
+STATUS_GRP = ['led', 'fan', 'buzzer']
 DATA_GRP = ['temperature', 'solar', 'illuminance', 'power', 'energy', 'environment']
 BRILLO_GRP = ['rgbled', 'brightness', 'audio', 'mp3player']
 

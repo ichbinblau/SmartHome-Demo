@@ -18,7 +18,7 @@ from utils import logsettings
 from utils import util
 from utils.config import config
 from DB.api import resource, user, gateway, sensor_group, actual_weather, actual_power, his_weather, predicted_power, \
-    gateway_model
+    gateway_model, activity
 from RestClient.sensor import Sensor
 from RestClient.api import ApiClient
 from RestClient.api.iotError import IoTRequestError
@@ -129,14 +129,15 @@ def _compose_sensor_data(sensor_type, latest_data, record_key, result_key, resul
     :param result: the return data dict
     :return:
     """
-
-    val_dict = {
-        'uuid': latest_data.get('resource').get('uuid') if latest_data.get('resource') else None,
-        'resource_id': latest_data.get('resource').get('id') if latest_data.get('resource')
-        else latest_data.get('resource_id'),
-        'path': latest_data.get('resource').get('path') if latest_data.get('resource') else None,
-        'tag': latest_data.get('resource').get('tag') if latest_data.get('resource') else None,
-    }
+    val_dict = {}
+    if latest_data:
+        val_dict = {
+            'uuid': latest_data.get('resource').get('uuid') if latest_data.get('resource') else None,
+            'resource_id': latest_data.get('resource').get('id') if latest_data.get('resource')
+            else latest_data.get('resource_id'),
+            'path': latest_data.get('resource').get('path') if latest_data.get('resource') else None,
+            'tag': latest_data.get('resource').get('tag') if latest_data.get('resource') else None,
+        }
 
     # extract group background color
     res_obj = latest_data.get('resource')
@@ -162,9 +163,7 @@ def _compose_sensor_data(sensor_type, latest_data, record_key, result_key, resul
             })
 
     if isinstance(record_key, dict):
-        val_dict.update({
-            'value': record_key.get('value'),
-        })
+        val_dict.update(record_key)
     elif isinstance(record_key, list):
         for key in record_key:
             val = latest_data.get(key)
@@ -193,6 +192,9 @@ def _compose_sensor_data(sensor_type, latest_data, record_key, result_key, resul
             result[result_key].update({rid: val_dict})
         else:
             result[result_key][rid].update(val_dict)
+    elif result_key == "activity":
+        uuid = latest_data.get('resource').get('uuid')
+        result[result_key].update({uuid: val_dict})
     else:
         if result[result_key].get(sensor_type) is None:
             result[result_key].update({sensor_type: [val_dict, ]})
@@ -208,8 +210,11 @@ def _get_sensor_data(token_dict):
         'status': {},
         'data': {},
         'brillo': {},
-        'generic': {}
+        'generic': {},
+        'activity': {},
     }
+    # todo: to be removed
+    #led_list = [3, 6]
     for sensor in res:
         typ = sensor.get('sensor_type').get('mapping_class')
         href = sensor.get('path')
@@ -223,22 +228,55 @@ def _get_sensor_data(token_dict):
                                                            token=token)
                 latest_data = latest_data if latest_data else {"resource_id": resource_id}
             elif typ == 'power':
-                latest_data = util.get_class("DB.api.energy.get_latest_by_gateway_uuid".format(typ))(resource_id=resource_id)
+                latest_data = util.get_class("DB.api.energy.get_latest_by_gateway_uuid".format(typ))(
+                    resource_id=resource_id)
             else:
-                latest_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format(typ))(resource_id=resource_id)
+                latest_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format(typ))(
+                    resource_id=resource_id)
+
             if typ == 'buzzer':
-                status_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format(typ))(resource_id=resource_id)
+                status_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format(typ))(
+                    resource_id=resource_id)
+
             if latest_data is None:
                 continue
             # print latest_data
+
+            # add activity
+            if typ == 'motion':
+                # 1. get pairing led's uuid
+                uuid = sensor.get("uuid")
+                rgbled_data = None
+                led_in_pair = [dev.get('id') for dev in res if uuid in dev.itervalues()
+                               and dev.get("sensor_type_id") == 8]
+                # todo: to be removed
+                #led_in_pair = [led_list.pop()]
+                if led_in_pair:
+                    rgbled_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format('rgbled'))(
+                        resource_id=led_in_pair[0])
+                if not rgbled_data:
+                    val = rgbled_data
+                    rgbled_data = {
+                        'resource': {'uuid': uuid}
+                    }
+                elif rgbled_data.get('rgbvalue') == "[255, 0, 0]":
+                    val = True
+                else:
+                    val = False
+                # 2. get total activities by id
+                act = activity.get_activity(resource_id=resource_id)
+                total = act.get('total') if act else 0
+                _compose_sensor_data(typ, rgbled_data, {'total': total, 'rgb_led': val}, 'activity', ret)
+
             if typ in ALERT_GRP:
                 _compose_sensor_data(typ, latest_data, 'created_at', 'alert', ret)
 
             if typ in STATUS_GRP:
-                if typ == "rgbled":
-                    val = True if latest_data.get('rgbvalue') == "[255, 0, 0]" else False
-                    _compose_sensor_data(typ, latest_data, {'value': val}, 'status', ret)
-                elif typ == 'buzzer':
+                # Remove rgb_led from the status panel
+                # if typ == "rgbled":
+                #     val = True if latest_data.get('rgbvalue') == "[255, 0, 0]" else False
+                #     _compose_sensor_data(typ, latest_data, {'value': val}, 'status', ret)
+                if typ == 'buzzer':
                     _compose_sensor_data(typ, status_data, 'status', 'status', ret)
                 else:
                     _compose_sensor_data(typ, latest_data, 'status', 'status', ret)

@@ -117,7 +117,7 @@ $(function () {
                 });
             });
 
-            $("#data-container, #alert-container, #status-container").on('click', 'li', function (e) {
+            $("#data-container, #alert-container, #status-container, #activity-container").on('click', 'li', function (e) {
                 if ($(e.target).text().indexOf('Add Group') > -1) {
                     showDialog({
                         title: 'Add New Group',
@@ -604,11 +604,11 @@ $(function () {
                     });
                 });
             });
-            $('.sensor-card h1').each(function () {
+            $('#data-container .sensor-card h1').each(function () {
                 var ID = $(this).attr('data-ID');
                 if (!sensor_list.includes(ID)) {
                     // remove the sensor card
-                    console.log('remove sensor:' + ID);
+                    // console.log('remove sensor:' + ID);
                     $(this).closest(".sensor-card").remove();
                 }
             });
@@ -620,6 +620,22 @@ $(function () {
             });
             $.sh.now.clear_brillo_data(data);
             $.sh.now.clear_generic_data(data);
+            $.sh.now.clear_activity_data(data);
+        },
+        clear_activity_data: function(data){
+            if (Object.keys(data["activity"]).length > 0) {
+                $('#activity-container').show();
+                var sensor_list = Object.keys(data["activity"]);
+                $('#activity-container .sensor-card h1').each(function () {
+                    var ID = $(this).attr('data-ID');
+                    if (!sensor_list.includes(ID)) {
+                        $(this).closest(".sensor-card").remove();
+                    }
+                });
+            }
+            else {
+                $('#activity-container').hide();
+            }
         },
         clear_brillo_data: function (data) {
             if (Object.keys(data["brillo"]).length > 0) {
@@ -1031,7 +1047,7 @@ $(function () {
                 uuid_cell = '<span class="mdl-card__subtitle-text" style="font-size: 70%; flex-basis: 100%;">ID: '
                     + data.uuid + ':' + data.path + '</span>';
 
-            var value = $(".sensor-card h1[data-ID='" + data.resource_id + "'][data-type='" + title + "']");
+            var value = $("#data-container .sensor-card h1[data-ID='" + data.resource_id + "'][data-type='" + title + "']");
 
             var type = title;
             if (data.tag)
@@ -1437,6 +1453,59 @@ $(function () {
                 // value.parent().next().find("tbody").html(rows);
             }
         },
+        update_activity_data: function(uuid, data, show_uuid){
+            var uuid_cell = '';
+            var bgcolor = "bg-blue";
+            if (data.rgb_led == undefined)
+                bgcolor = "bg-grey";
+            else if(data.rgb_led == true)
+                bgcolor = "bg-red";
+
+            var title = "ACTIVITY SENSOR";
+            if (show_uuid)
+                uuid_cell = '<span class="mdl-card__subtitle-text" style="font-size: 70%; flex-basis: 100%;">UUID: '
+                    + data.uuid + '</span>';
+
+            // var value = $(".sensor-card h1[data-ID='" + data.resource_id + "'][data-type='" + title + "']");
+            var value = $("#activity-container .sensor-card h1[data-ID='" + data.resource_id + "']");
+
+            var type = title;
+            if (data.tag)
+                type = type + data.tag;
+
+            if (value.length == 0) {
+                var html = String.format('<div class="sensor-card mdl-card mdl-cell mdl-shadow--2dp mdl-cell--3-col">\
+                    <div class="mdl-card__title" style="display: flex; flex-flow: row wrap;">\
+                        <button id="{0}-{2}" class="mdl-button mdl-js-button mdl-button--raised" style="background:{5}" title="{0}">\
+                        </button>\
+                        <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="{0}-{2}">\
+                        </ul>\
+			  	        <h6>{4}</h6>\
+			  	        <i class="material-icons edit" style="display: none;">edit</i>\
+			  	        {1}\
+                    </div>\
+                    <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">\
+                        <div class="mdl-cell mdl-cell--12-col" style="display: inline-flex">\
+                            <div class="mdl-cell mdl-cell--8-col">\
+                              <h1 data-ID="{2}" data-type="{0}" style="font-size: 3.8vw;">{3}</h1>\
+                            </div>\
+                            <div class="mdl-cell mdl-cell--4-col" style="text-align: right;" title="RGB LED">\
+                             <i class="material-icons md-48 {7}">lightbulb_outline</i>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>', title, uuid_cell, data.resource_id, data.total, type, data.color.color, data.color.name, bgcolor);
+                $("#activity-container").append(html);
+
+                //Expand all new MDL elements
+                componentHandler.upgradeDom();
+            }
+            else {
+                value.text(data.total);
+                var icon = value.parent().next().find("i");
+                icon.removeClass().addClass("material-icons md-48 " + bgcolor);
+            }
+        },
         get_temperature_in_timezone: function (value) {
             var house_temp = null;
             var temp_unit = "°";
@@ -1590,6 +1659,10 @@ $(function () {
                     $.each(sensors['generic'], function (key, value) {
                         var show_uuid = true;
                         $.sh.now.update_generic_data(key, value, show_uuid);
+                    });
+                    $.each(sensors['activity'], function (key, value) {
+                        var show_uuid = true;
+                        $.sh.now.update_activity_data(key, value, show_uuid);
                     });
                 }
             }).done(function () {
