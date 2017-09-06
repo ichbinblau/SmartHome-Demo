@@ -7,9 +7,10 @@ import json
 from RestClient.api.IoTClient import IoTClient
 from RestClient.api.iotError import IoTRequestError
 from utils.config import config
-from DB.api import sensor_type
+from eventlet import greenpool
 
 logger = logging.getLogger(__name__)
+thread_pool = greenpool.GreenPool(size=32)
 
 
 class Sensor(object):
@@ -45,8 +46,15 @@ class Sensor(object):
         if self.resp:
             self.resp.close()
 
+    def update_status_async(self, data):
+        thread_pool.spawn(self.update_status,
+                          data=data)
+        print("Started a green thread to handle the update")
+        return True
+
     def update_status(self, data):
         ret = False
+        print data
         uri = "{}?di={}".format(self.path, self.id)
         if isinstance(data, dict):
             self.resp = self._client.post(uri, json.dumps(data))
@@ -58,7 +66,6 @@ class Sensor(object):
                 print('Failed to update {} status: {}'.format(uri, str(self.resp.errors())))
                 raise IoTRequestError(self.resp.status_code)
         return ret
-
 
 
 

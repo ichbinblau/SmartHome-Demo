@@ -25,7 +25,6 @@ from RestClient.api.iotError import IoTRequestError
 from utils.settings import SECRET_KEY, ALERT_GRP, STATUS_GRP, DATA_GRP, BRILLO_GRP
 from datetime import timedelta
 
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -213,8 +212,11 @@ def _get_sensor_data(token_dict):
         'generic': {},
         'activity': {},
     }
+
+    motion_led_list = []
+
     # todo: to be removed
-    #led_list = [3, 6]
+    # led_list = [3, 6]
     for sensor in res:
         typ = sensor.get('sensor_type').get('mapping_class')
         href = sensor.get('path')
@@ -244,13 +246,14 @@ def _get_sensor_data(token_dict):
 
             # add activity
             if typ == 'motion':
+
                 # 1. get pairing led's uuid
                 uuid = sensor.get("uuid")
                 rgbled_data = None
                 led_in_pair = [dev.get('id') for dev in res if uuid in dev.itervalues()
                                and dev.get("sensor_type_id") == 8]
                 # todo: to be removed
-                #led_in_pair = [led_list.pop()]
+                # led_in_pair = [led_list.pop()]
                 if led_in_pair:
                     rgbled_data = util.get_class("DB.api.{}.get_latest_by_gateway_uuid".format('rgbled'))(
                         resource_id=led_in_pair[0])
@@ -263,10 +266,19 @@ def _get_sensor_data(token_dict):
                     val = True
                 else:
                     val = False
+
                 # 2. get total activities by id
                 act = activity.get_activity(resource_id=resource_id)
                 total = act.get('total') if act else 0
                 _compose_sensor_data(typ, rgbled_data, {'total': total, 'rgb_led': val}, 'activity', ret)
+
+                # 3. record the motion led pairing info
+                if "resource" in rgbled_data:
+                    motion_led_info = {'activity': total,
+                                       'led_id': rgbled_data.get("resource").get("uuid"),
+                                       'led_pth': rgbled_data.get("resource").get("path")}
+                                        # 'led_id': uuid}
+                motion_led_list.append(motion_led_info)
 
             if typ in ALERT_GRP:
                 _compose_sensor_data(typ, latest_data, 'created_at', 'alert', ret)
@@ -318,8 +330,23 @@ def _get_sensor_data(token_dict):
                     keys = ['media_states', 'playlist', 'state', 'title']
 
                 _compose_sensor_data(typ, latest_data, keys, 'brillo', ret)
+
+    _update_motion_led(motion_led_list)
     return ret
 
+
+def _update_motion_led(motion_led_list):
+    print motion_led_list
+    if len(motion_led_list) == 0:
+        return
+    ma = max([item["activity"] for item in motion_led_list])
+    for motion_led in motion_led_list:
+        sensor = Sensor(motion_led["led_id"], motion_led["led_pth"], session["gateway_id"])
+        if motion_led["activity"] == ma:
+            sensor.update_status_async({"rgbValue": [255, 0, 0]})
+        else:
+            sensor.update_status_async({"rgbValue": [0, 0, 255]})
+            
 
 @app.route('/get_sensor')
 @login_required
