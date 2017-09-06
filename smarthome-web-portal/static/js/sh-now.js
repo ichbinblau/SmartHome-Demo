@@ -593,15 +593,19 @@ $(function () {
             });
         },
         clear_data: function (data) {
-            var types = ["status", "data"];
+            var types = ["status", "data", "activity"];
             var sensor_list = [];
             types.forEach(function (type) {
                 $.each(data[type], function (key, value_list) {
-                    value_list.forEach(function (value) {
-                        var id = value.resource_id.toString();
-                        if (!sensor_list.includes(id))
-                            sensor_list.push(id);
-                    });
+                    if(type == "activity")
+                        sensor_list.push(value_list.resource_id.toString());
+                    else{
+                        value_list.forEach(function (value) {
+                            var id = value.resource_id.toString();
+                            if (!sensor_list.includes(id))
+                                sensor_list.push(id);
+                        });
+                    }
                 });
             });
             $('#data-container .sensor-card h1').each(function () {
@@ -618,24 +622,14 @@ $(function () {
                     $(this).closest(".status-card").remove();
                 }
             });
+            $('#activity-container .sensor-card h1').each(function () {
+                var ID = $(this).attr('data-ID');
+                if (!sensor_list.includes(ID)) {
+                    $(this).closest(".sensor-card").remove();
+                }
+            });
             $.sh.now.clear_brillo_data(data);
             $.sh.now.clear_generic_data(data);
-            $.sh.now.clear_activity_data(data);
-        },
-        clear_activity_data: function(data){
-            if (Object.keys(data["activity"]).length > 0) {
-                $('#activity-container').show();
-                var sensor_list = Object.keys(data["activity"]);
-                $('#activity-container .sensor-card h1').each(function () {
-                    var ID = $(this).attr('data-ID');
-                    if (!sensor_list.includes(ID)) {
-                        $(this).closest(".sensor-card").remove();
-                    }
-                });
-            }
-            else {
-                $('#activity-container').hide();
-            }
         },
         clear_brillo_data: function (data) {
             if (Object.keys(data["brillo"]).length > 0) {
@@ -1575,7 +1569,7 @@ $(function () {
                                 console.error("Unknown alert sensor type: " + key);
                         }
                         // console.log("number of alert cards " + alert_card_number);
-                        if (alert_card_number == 1) {
+                        if (alert_card_number > 0) {
                             $("#alert-status-title-quiet").hide();
                             $("#alert-status-title-alerts").show();
                         }
@@ -1704,14 +1698,14 @@ $(function () {
             //componentHandler.upgradeDom();
             window.now_timer = setInterval($.sh.now.update_portal, 3000);
             // update weather every 1 hour
-            window.weather_timer = setInterval(updateWeather(), 3600 * 1000);
+            // window.weather_timer = setInterval(updateWeather(), 3600 * 1000);
         }
     };
 
     $("a:contains('NOW')").on('click', function () {
         clearInterval(window.time_timer);
         clearInterval(window.now_timer);
-        clearInterval(window.weather_timer);
+        //clearInterval(window.weather_timer);
         //clearInterval(chart_timer);
         $.sh.now.init();
     });
