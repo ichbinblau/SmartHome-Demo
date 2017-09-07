@@ -2,15 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    component: rabbitmq
+    app: rabbitmq
   name: rabbitmq-service
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: taskQueue
-        component: rabbitmq
+        #app: taskQueue
+        app: rabbitmq
     spec:
       #hostNetwork: true
       nodeSelector:

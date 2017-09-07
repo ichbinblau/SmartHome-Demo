@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: rabbit-service
   labels:
-    app: rabbit
+    app: rabbitmq
 spec:
   type: ClusterIP
   ports:
@@ -12,4 +12,4 @@ spec:
   - port: 15672
     name: dashboard
   selector:
-    component: rabbitmq
+    app: rabbitmq

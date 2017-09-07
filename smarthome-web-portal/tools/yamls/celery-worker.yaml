@@ -16,10 +16,11 @@ spec:
       - name: long-task
         image: 192.168.1.102:5000/celery:update
         imagePullPolicy: Always
+        #command: ["/bin/sh", "-c", "tail -f /dev/null"]
         command: ["/bin/sh", "-c"]
-        args: ["celery amqp queue.delete iot_queue_3 && python CeleryTask/tasks.py && celery -A CeleryTask.celeryapp worker -l info -c 1 -Q iot_queue_3"]
+        args: ["celery amqp queue.delete iot_queue_2 -b amqp://admin:admin@$RABBIT_SERVICE_SERVICE_HOST:$RABBIT_SERVICE_PORT_5672_TCP_PORT && python CeleryTask/tasks.py && celery -A CeleryTask.celeryapp worker -l info -c 1 -Q iot_queue_2"]
       - name: periodic-task
         image: 192.168.1.102:5000/celery:update
         imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
-        args: ["celery amqp queue.delete celery && celery -A CeleryTask.celeryapp worker -l info -c 1 -Q celery -B"]
+        args: ["celery -A CeleryTask.celeryapp worker -l info -c 1 -Q celery -B"]
