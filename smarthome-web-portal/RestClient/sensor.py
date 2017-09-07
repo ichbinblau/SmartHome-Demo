@@ -47,8 +47,9 @@ class Sensor(object):
             self.resp.close()
 
     def update_status_async(self, data):
-        thread_pool.spawn(self.update_status,
-                          data=data)
+        th = thread_pool.spawn(self.update_status,
+                               data=data)
+        print th.wait()
         print("Started a green thread to handle the update")
         return True
 

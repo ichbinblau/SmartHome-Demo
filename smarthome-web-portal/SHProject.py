@@ -247,11 +247,15 @@ def _get_sensor_data(token_dict):
             # add activity
             if typ == 'motion':
 
-                # 1. get pairing led's uuid
-                uuid = sensor.get("uuid")
+                # 1. pair rgb led with motion
+                # uuid = sensor.get("uuid")
+                href_id = href.split('-')[-1]
                 rgbled_data = None
-                led_in_pair = [dev.get('id') for dev in res if uuid in dev.itervalues()
+                print "href id " + href_id
+
+                led_in_pair = [dev.get('id') for dev in res if "-".join(("/a/rgbled", href_id)) in dev.itervalues()
                                and dev.get("sensor_type_id") == 8]
+                print "pair id " + str(led_in_pair)
                 # todo: to be removed
                 # led_in_pair = [led_list.pop()]
                 if led_in_pair:
@@ -260,12 +264,15 @@ def _get_sensor_data(token_dict):
                 if not rgbled_data:
                     val = rgbled_data
                     rgbled_data = {
-                        'resource': {'uuid': uuid}
+                        'resource': {'uuid': sensor.get("uuid")}
                     }
-                elif rgbled_data.get('rgbvalue') == "[255, 0, 0]":
+                elif str(rgbled_data.get('rgbvalue')).strip() == "[255, 0, 0]":
                     val = True
                 else:
                     val = False
+
+                if rgbled_data:
+                    print str(rgbled_data.get('rgbvalue')).strip()
 
                 # 2. get total activities by id
                 act = activity.get_activity(resource_id=resource_id)
@@ -273,12 +280,13 @@ def _get_sensor_data(token_dict):
                 _compose_sensor_data(typ, rgbled_data, {'total': total, 'rgb_led': val}, 'activity', ret)
 
                 # 3. record the motion led pairing info
-                if "resource" in rgbled_data:
+                # print rgbled_data.get("resource")
+                if "id" in rgbled_data.get("resource"):
                     motion_led_info = {'activity': total,
                                        'led_id': rgbled_data.get("resource").get("uuid"),
                                        'led_pth': rgbled_data.get("resource").get("path")}
-                                        # 'led_id': uuid}
-                motion_led_list.append(motion_led_info)
+
+                    motion_led_list.append(motion_led_info)
 
             if typ in ALERT_GRP:
                 _compose_sensor_data(typ, latest_data, 'created_at', 'alert', ret)
@@ -343,8 +351,10 @@ def _update_motion_led(motion_led_list):
     for motion_led in motion_led_list:
         sensor = Sensor(motion_led["led_id"], motion_led["led_pth"], session["gateway_id"])
         if motion_led["activity"] == ma:
+            # set red color
             sensor.update_status_async({"rgbValue": [255, 0, 0]})
         else:
+            # set blue color
             sensor.update_status_async({"rgbValue": [0, 0, 255]})
             
 
@@ -728,5 +738,5 @@ if __name__ == '__main__':
     logger = logsettings.setup_log()
     logger.info('init SMART HOME project ...')
     port = os.getenv('PORT', '3000')
-    socketio.run(app, debug=False, port=int(port), host="0.0.0.0")
+    socketio.run(app, debug=True, port=int(port), host="0.0.0.0")
 

@@ -597,8 +597,10 @@ $(function () {
             var sensor_list = [];
             types.forEach(function (type) {
                 $.each(data[type], function (key, value_list) {
-                    if(type == "activity")
-                        sensor_list.push(value_list.resource_id.toString());
+                    if(type == "activity"){
+                        if(value_list.resource_id != null)
+                            sensor_list.push(value_list.resource_id.toString());
+                    }
                     else{
                         value_list.forEach(function (value) {
                             var id = value.resource_id.toString();
