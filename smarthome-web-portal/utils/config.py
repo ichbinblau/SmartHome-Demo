@@ -82,7 +82,7 @@ class Configuration(SingletonMixin):
         host = self.parser.get_default('mysql', 'host', 'localhost')
         port = self.parser.get_default('mysql', 'port', '3306')
         username = self.parser.get_default('mysql', 'username', 'root')
-        password = self.parser.get_default('mysql', 'password', 'zaq12wsx')
+        password = self.parser.get_default('mysql', 'password', '')
         database = self.parser.get_default('mysql', 'database', 'flask_test')
         return "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(username, password, host, port, database)
 
@@ -114,6 +114,7 @@ class Configuration(SingletonMixin):
 
     def get_sms_interval(self):
         return self.parser.get_default('SMS', 'interval', '600')
+
 
 config = Configuration.instance()
 

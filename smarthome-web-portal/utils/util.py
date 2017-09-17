@@ -8,6 +8,7 @@ import json
 from os.path import join
 import re
 import sys
+from random import SystemRandom
 from pytz import timezone, all_timezones
 from uuid import UUID
 from utils.settings import PROJECT_ROOT
@@ -223,3 +224,29 @@ def is_json(myjson):
     except ValueError, e:
         return False
     return True
+
+
+def get_formatted_connection_url(conn_str):
+    """
+    Hide the password in the connection string
+    """
+    if not conn_str:
+        return conn_str
+    parts = conn_str.split("@")
+    if len(parts) == 1:
+        # no password in the string
+        return conn_str
+    protocol, pwd = parts[0].rsplit(":", 1)
+    new_str = "{}:{}@".format(protocol, len(pwd) * "*")
+    return new_str + parts[1]
+
+
+def gen_randint(start=0, stop=10):
+    """
+    Generate cryptographically secure random int
+    :param start: start value
+    :param stop: stop value
+    :return: random int
+    """
+    cryptogen = SystemRandom()
+    return cryptogen.randint(start, stop)

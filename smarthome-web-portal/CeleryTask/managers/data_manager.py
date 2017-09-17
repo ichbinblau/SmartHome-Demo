@@ -4,7 +4,7 @@ Task to fetch data
 """
 import threading
 import time
-from random import randint
+from utils.util import gen_randint
 from RestClient import Resource as rsclient
 from DB.api import resource, sensor_type
 from CeleryTask.managers import base
@@ -146,7 +146,7 @@ class DataManager(base.BaseTask):
                                       "for {}?di={}".format(self.MAX_THREAD, href, di))
                         self.log.info(connections.keys())
                         break
-                    time.sleep(randint(0, 5))
+                    time.sleep(gen_randint(0, 5))
                     t = FetchData(self.gateway_id, (href, di, obs))
                     connections[str(rid)] = t
                     self.log.info('threads in the pool: ' + str(connections))

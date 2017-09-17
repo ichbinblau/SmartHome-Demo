@@ -4,6 +4,7 @@ app settings
 """
 import os
 import hashlib
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,6 +14,7 @@ SECRET_KEY = os.urandom(KEY_SIZE)
 DEBUG = True
 
 SQLALCHEMY_TRACK_MODIFICATIONS = True
+PERMANENT_SESSION_LIFETIME = timedelta(minutes=5)
 
 #from admin.utils import get_vcap_service
 #SQLALCHEMY_DATABASE_URI = get_vcap_service()

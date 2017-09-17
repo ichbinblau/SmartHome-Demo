@@ -23,7 +23,7 @@
             </div>
             {#  edit #}
             {% if gateway %}
-                <form action="{{ url_for('update_gw', gw_id=gateway.id) }}" method="post" style="display:inline;">
+                <form action="{{ url_for('gateway.update_gw', gw_id=gateway.id) }}" method="post" style="display:inline;">
                     <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                         <div class="mdl-cell mdl-cell--1-col" >
                           <i class="material-icons md-36">toc</i>
@@ -91,7 +91,7 @@
             </form>
             {#  new #}
             {%  else %}
-                <form action="{{ url_for('create_gw') }}" method="post" style="display:inline;">
+                <form action="{{ url_for('gateway.create_gw') }}" method="post" style="display:inline;">
                     <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                         <div class="mdl-cell mdl-cell--1-col">
                             <i class="material-icons md-36">router</i>

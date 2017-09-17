@@ -3,7 +3,7 @@
 app entry
 """
 import os
-from admin import app
+from admin import create_app
 
 try:
     import pymysql
@@ -11,5 +11,7 @@ try:
 except ImportError:
     pass
 
-PORT = os.getenv('PORT', '4000')
-app.run(port=int(PORT), host='0.0.0.0', debug=False)
+if __name__ == "__main__":
+    PORT = os.getenv('PORT', '4000')
+    app = create_app()
+    app.run(port=int(PORT), host='0.0.0.0')

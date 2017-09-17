@@ -25,7 +25,7 @@
             </div>
             {#  edit #}
             {% if user %}
-                <form action="{{ url_for('update_user', uid=user.id) }}" method="post" style="display:inline;">
+                <form action="{{ url_for('user.update_user', uid=user.id) }}" method="post" style="display:inline;">
                     <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                         <div class="mdl-cell mdl-cell--1-col" >
                           <i class="material-icons md-36">toc</i>
@@ -77,7 +77,7 @@
             </form>
             {#  new #}
             {%  else %}
-                <form action="{{ url_for('create_user') }}" method="post" style="display:inline;" onsubmit="return hashPassword(this);">
+                <form action="{{ url_for('user.create_user') }}" method="post" style="display:inline;" onsubmit="return hashPassword(this);">
                     <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                         <div class="mdl-cell mdl-cell--1-col">
                             <i class="material-icons md-36">face</i>

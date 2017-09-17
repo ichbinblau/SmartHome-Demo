@@ -5,16 +5,16 @@ and do power usage prediction by weather
 """
 import requests
 import json
-import random
 import copy
 from datetime import datetime
 from datetime import timedelta
 
 from config import FORECAST_URL, HISTORICAL_URL, FORECAST_RANGE, PROXY
-from admin import db
-from admin.models import ActualWeather, HisWeather, PredictedPower, ActualPower
+#from admin import db
+from admin.models import db, ActualWeather, HisWeather, PredictedPower, ActualPower
 from admin.machine_learning import predict
 from pprint import pprint
+from utils import gen_randint
 
 
 def http_get(url, params=None):
@@ -161,7 +161,7 @@ def set_actual_his(list_predict_his):
 
     for i, v in enumerate(actual_his):
         if i != 0:
-            actual_his[i]['power'] = float(v['power']) + random.randint(-2, 2)
+            actual_his[i]['power'] = float(v['power']) + gen_randint(-2, 2)
     bulk_insert(ActualPower, actual_his)
 
 

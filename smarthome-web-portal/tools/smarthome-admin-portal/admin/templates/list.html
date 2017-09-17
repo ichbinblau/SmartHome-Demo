@@ -49,7 +49,7 @@
                             <td class="mdl-data-table__cell--non-numeric">{{ gw.created_at }}</td>
                             <td class="mdl-data-table__cell--non-numeric" style="white-space: nowrap;">
                                     <a class="mdl-navigation__link" href="/gateway/{{ gw.id }}" title="edit"><i class="mdl-color-text--blue-grey-400 material-icons">edit</i></a>
-                                    <form method="post" action="{{ url_for('delete_gw') }}" class="remove">
+                                    <form method="post" action="{{ url_for('gateway.delete_gw') }}" class="remove">
                                         <input type="hidden" name="id" value="{{ gw.id }}">
                                         <a class="mdl-navigation__link" href="" title="delete"><i class="mdl-color-text--blue-grey-400 material-icons" >delete</i></a>
                                     </form>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="mdl-card__actions" style="margin-left: 2%;">
                     <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/gateway">NEW</a>
-                    <form method="post" action="{{ url_for('delete_gw') }}" class="remove">
+                    <form method="post" action="{{ url_for('gateway.delete_gw') }}" class="remove">
                         <input type="hidden" name="id" id="multi-delete">
                         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">DELETE</a>
                     </form>

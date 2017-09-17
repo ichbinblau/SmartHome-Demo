@@ -5,6 +5,7 @@ util functions
 import datetime
 import json
 import os
+from random import SystemRandom
 
 
 def get_utc_now():
@@ -27,4 +28,15 @@ def get_vcap_service():
                 return "{}?charset=utf8".format(uri[0])
     else:
         return 'mysql+pymysql://root:zaq12wsx@localhost:13306/smart_home'
+
+
+def gen_randint(start=0, stop=10):
+    """
+    Generate cryptographically secure random int
+    :param start: start value
+    :param stop: stop value
+    :return: random int
+    """
+    cryptogen = SystemRandom()
+    return cryptogen.randint(start, stop)
 

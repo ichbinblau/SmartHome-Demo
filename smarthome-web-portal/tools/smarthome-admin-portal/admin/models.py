@@ -4,9 +4,12 @@ Model definition
 """
 import datetime
 import functools
-from admin import db
+#from admin import db
 from admin import utils
+from flask.ext.sqlalchemy import SQLAlchemy
 
+
+db = SQLAlchemy()
 
 def wrap_to_dict(support_keys=[], **filters):
     def decorator(func):

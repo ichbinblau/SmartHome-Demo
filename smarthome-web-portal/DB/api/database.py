@@ -19,6 +19,7 @@ from sqlalchemy.pool import StaticPool
 
 from DB import models, exception
 from utils.config import config
+from utils.util import get_formatted_connection_url
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,19 @@ TABLES = ['user',
           'resource',
           'sensor_type',
           'sms_history',
+          'activity',
+          'actual_power',
+          'actual_weather',
+          'audio',
+          'brightness',
+          'data_model',
+          'dataset',
+          'gateway_model',
+          'generic',
+          'his_weather',
+          'mp3player',
+          'predicted_power',
+          'sensor_group',
           ]
 
 
@@ -72,19 +86,7 @@ def init(database_url=None):
     global SCOPED_SESSION
     if not database_url:
         database_url = config.get_connection_url()
-    logging.info('init database %s', database_url)
-    #print database_url
-    #root_logger = logging.getLogger()
-    #fine_debug = root_logger.isEnabledFor(logsetting.LOGLEVEL_MAPPING['fine'])
-    #if fine_debug:
-    #    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    #finest_debug = root_logger.isEnabledFor(
-    #    logsetting.LOGLEVEL_MAPPING['finest']
-    #)
-    #if finest_debug:
-    #    logging.getLogger('sqlalchemy.dialects').setLevel(logging.INFO)
-    #    logging.getLogger('sqlalchemy.pool').setLevel(logging.INFO)
-    #    logging.getLogger('sqlalchemy.orm').setLevel(logging.INFO)
+    logging.info('init database %s', get_formatted_connection_url(database_url))
     poolclass = POOL_MAPPING[config.get_database_pool_type()]
     ENGINE = create_engine(
         database_url, convert_unicode=True,
@@ -96,7 +98,9 @@ def init(database_url=None):
 
 
 def in_session():
-    #check if in database session scope.#
+    """
+    check if in database session scope.
+    """
     if hasattr(SESSION_HOLDER, 'session'):
         return True
     else:
@@ -151,9 +155,8 @@ def session():
 
 
 def current_session():
-    """Get the current session scope when it is called.
-
-       :return: database session.
+    """
+    Get the current session scope when it is called.
     """
     try:
         return SESSION_HOLDER.session
@@ -178,18 +181,24 @@ def run_in_session():
 
 @run_in_session()
 def create_db(session):
-    #Create database.#
+    """
+    Create database.
+    """
     models.Base.metadata.create_all(bind=ENGINE)
 
 
 @run_in_session()
 def drop_db(session):
-    #Drop database.#
+    """
+    Drop database.
+    """
     models.Base.metadata.drop_all(bind=ENGINE)
 
 
 def check_tables():
-    #check tables exist or not
+    """
+    check tables exist or not
+    """
     logging.info('check table info')
     if not ENGINE:
         init()
