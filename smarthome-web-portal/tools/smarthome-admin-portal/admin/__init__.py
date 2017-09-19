@@ -15,7 +15,7 @@ def create_app(debug=False):
     """Create an application."""
     """ static resource location"""
     # Create an Instance of Flask
-    app = Flask(__name__, static_url_path='')
+    app = Flask(__name__, static_url_path='', )
     app.debug = debug
 
     # Include config from config.py

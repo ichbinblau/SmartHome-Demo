@@ -4,7 +4,7 @@ from . import login_required
 from admin.models import db, Gateway, _wrapper_dict
 from sqlalchemy.exc import IntegrityError
 
-gw_bp = Blueprint('gateway', __name__)
+gw_bp = Blueprint('gateway', __name__, )
 
 
 FORM_DATA = ['name', 'url', 'address', 'latitude', 'longitude']

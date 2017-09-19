@@ -13,5 +13,5 @@ except ImportError:
 
 if __name__ == "__main__":
     PORT = os.getenv('PORT', '4000')
-    app = create_app()
+    app = create_app(debug=False)
     app.run(port=int(PORT), host='0.0.0.0')

@@ -38,11 +38,11 @@
     }
 
     </style>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+    <script type="text/javascript" src="{{ static_url_prefix }}bower_components/socket.io-client/dist/socket.io.slim.js"></script>
+    <link href="{{ static_url_prefix }}bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="{{ static_url_prefix }}bower_components/select2/dist/js/select2.min.js"></script>
+    <script src="{{ static_url_prefix }}bower_components/spectrum/spectrum.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ static_url_prefix }}bower_components/spectrum/spectrum.css">
 
     <!-- get current gateway datetime -->
     <script type="text/javascript" src="{{ static_url_prefix }}js/geo2time.js"></script>

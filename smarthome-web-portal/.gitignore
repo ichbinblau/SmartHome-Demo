@@ -8,3 +8,4 @@ tools/smarthome-admin-portal/admin/dataset/*.csv
 tools/smarthome-admin-portal/admin/dataset/*.txt
 tools/smarthome-admin-portal/admin/static/images/model/*.png
 tools/smarthome-admin-portal/admin/model/seria/*.pkl
+static/bower_components/*

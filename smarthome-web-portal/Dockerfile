@@ -41,6 +41,15 @@ RUN apt-get clean && apt-get update
 # install python2 and common tools
 RUN apt-get -y install python
 
+# Install npm, nodejs
+RUN apt-get install -y npm nodejs-legacy
+
+# Set up proxy for npm
+RUN npm config set proxy $http_proxy
+RUN npm config set https-proxy $https_proxy
+
+RUN npm install -g bower
+
 # forward port
 EXPOSE 3000 4000
 
@@ -64,6 +73,14 @@ WORKDIR /opt/SmartHome-Demo/smarthome-web-portal
 
 # install portal dependencies
 RUN pip install -r requirements.txt
+
+# set up proxy for bower
+COPY tools/docker/bowerrc /root/.bowerrc
+RUN sed -i "/HTTP_PROXY/$http_proxy/" /root/.bowerrc
+RUN sed -i "/HTTPS_PROXY/$https_proxy/" /root/.bowerrc
+
+# install javascript libraries and css
+RUN bower install
 
 # create symbolic link to admin portal's model images from the home portal
 RUN ln -sf /opt/SmartHome-Demo/smarthome-web-portal/tools/smarthome-admin-portal/admin/static/images/model /opt/SmartHome-Demo/smarthome-web-portal/static/image/model 
