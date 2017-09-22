@@ -11,7 +11,6 @@ spec:
       labels:
         name: mysql-master
     spec:
-      #hostNetwork: true
       nodeSelector:
         platform: nuc
       containers:
@@ -21,16 +20,14 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "intel123"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mysql-root-pass
-          #    key: mysql-root-pass.secret
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-pass
+              key: mysql-root-pass.secret
         - name: MYSQL_REPL_PASSWORD
-          value: "intel123"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mysql-root-pass
-          #    key: mysql-root-pass.secret
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root-pass
+              key: mysql-root-pass.secret
         - name: ROLE
           value: "Master"
