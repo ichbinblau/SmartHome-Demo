@@ -11,7 +11,7 @@ spec:
       labels:
         app: admin-dashboard
     spec:
-      hostNetwork: true
+      #hostNetwork: true
       nodeSelector:
         platform: nuc
       containers:

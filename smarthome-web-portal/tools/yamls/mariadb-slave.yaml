@@ -11,9 +11,9 @@ spec:
       labels:
         name: mysql-slave
     spec:
-      hostNetwork: true
+      # hostNetwork: true
       nodeSelector:
-        platform: minnowboard
+        platform: nuc
       containers:
       - name: slave
         image: 192.168.1.102:5000/mariadb:latest
