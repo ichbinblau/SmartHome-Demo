@@ -15,7 +15,7 @@ spec:
         platform: nuc
       containers:
       - name: master
-        image: 192.168.1.102:5000/mariadb:latest
+        image: 192.168.2.117:5000/mariadb-master
         ports:
         - containerPort: 3306
         env:

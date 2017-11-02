@@ -16,12 +16,7 @@ spec:
         platform: nuc
       containers:
       - name: admin-dashboard
-        image: 192.168.1.102:5000/admin-portal:demo
-        env:
-        - name: http_proxy
-          value: "http://proxy.jf.intel.com:911"
-        - name: https_proxy
-          value: "http://proxy.jf.intel.com:911"  
+        image: 192.168.2.117:5000/admin-portal
         ports:
         - containerPort: 4000
         imagePullPolicy: Always

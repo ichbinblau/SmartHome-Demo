@@ -10,6 +10,7 @@ spec:
   - port: 4000
     protocol: TCP
     name: admin
+    targetPort: 34000
   type: NodePort
   selector:
     app: admin-dashboard

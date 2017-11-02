@@ -16,14 +16,14 @@ spec:
         platform: nuc
       containers:
       - name: home-dashboard
-        image: 192.168.1.102:5000/home-portal:update
+        image: 192.168.2.117:5000/home-portal
         ports:
         - containerPort: 3000
         env:
         - name: ADMIN_SERVICE_HOST
-          value: "192.168.1.102"
+          value: "admin-portal.iot2cloud"
         - name: ADMIN_SERVICE_NODE_PORT
-          value: "32471"
+          value: "34000"
         imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         args: ["/usr/bin/python initial_db.py && /usr/bin/python SHProject.py"]
