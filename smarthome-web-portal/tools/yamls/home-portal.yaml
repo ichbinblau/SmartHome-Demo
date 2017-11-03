@@ -16,7 +16,7 @@ spec:
         platform: nuc
       containers:
       - name: home-dashboard
-        image: 192.168.2.117:5000/home-portal
+        image: localhost:30400/home-portal
         ports:
         - containerPort: 3000
         env:
