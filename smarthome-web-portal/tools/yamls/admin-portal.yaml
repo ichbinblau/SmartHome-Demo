@@ -16,7 +16,7 @@ spec:
         platform: nuc
       containers:
       - name: admin-dashboard
-        image: 192.168.2.117:5000/admin-portal
+        image: localhost:30400/admin-portal
         ports:
         - containerPort: 4000
         imagePullPolicy: Always

@@ -14,13 +14,13 @@ spec:
         platform: minnowboard
       containers:
       - name: gateway-server
-        image: 192.168.2.117:5000/smarthome-gateway
+        image: localhost:30400/smarthome-gateway
         env:
         - name: NODE_PATH
           value: "/opt/SmartHome-Demo/gateway/node_modules/"
         command: ["/usr/bin/node", "/opt/SmartHome-Demo/gateway/gateway-server.js", "-r"]
       - name: gateway-index
-        image: 192.168.2.117:5000/smarthome-gateway
+        image: localhost:30400/smarthome-gateway
         env:
         - name: NODE_PATH
           value: "/opt/SmartHome-Demo/gateway/node_modules/"
