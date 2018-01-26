@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gateway
+  name: iot-gateway
   labels:
-    app: gateway
+    app: iot-gateway
 spec:
   type: NodePort
   ports:
   - port: 8000
     protocol: TCP
   selector:
-    app: gateway
+    app: iot-gateway

@@ -16,7 +16,7 @@ spec:
       nodeSelector:
         platform: nuc
       containers:
-      - image: locahost:30400/rabbitmq
+      - image: localhost:30400/rabbitmq
         name: rabbitmq
         ports:
         - containerPort: 5672

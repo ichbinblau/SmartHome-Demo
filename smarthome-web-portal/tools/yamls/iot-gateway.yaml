@@ -1,26 +1,26 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: gateway
+  name: iot-gateway
 spec:
   replicas: 3
   template:
     metadata:
       labels: 
-        app: gateway
+        app: iot-gateway
     spec:
       hostNetwork: true
       nodeSelector:
         platform: minnowboard
       containers:
       - name: gateway-server
-        image: localhost:30400/smarthome-gateway
+        image: localhost:30400/iot-gateway
         env:
         - name: NODE_PATH
           value: "/opt/SmartHome-Demo/gateway/node_modules/"
         command: ["/usr/bin/node", "/opt/SmartHome-Demo/gateway/gateway-server.js", "-r"]
       - name: gateway-index
-        image: localhost:30400/smarthome-gateway
+        image: localhost:30400/iot-gateway
         env:
         - name: NODE_PATH
           value: "/opt/SmartHome-Demo/gateway/node_modules/"
